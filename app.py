@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 def index():
     result = db.session.execute("SELECT COUNT(*) FROM users")
     count = result.fetchone()[0]
-    return render_template("index.html")
+    return render_template("index.html", count=count)
 
 @app.route("/kirjautuminen")
 def kirjautuminen():
@@ -29,3 +29,11 @@ def turhat():
 def loysat():
     return "Tähän pian tulossa löysää löpinää"
 
+@app.route("/send", methods=["POST"])
+def send():
+    name = request.form["name"]
+    password = request.form["password"]
+    sql = "INSERT INTO users (name) VALUES (:name)"
+    db.session.execute(sql, {"name":name})
+    db.session.commit()
+    return redirect("/")
